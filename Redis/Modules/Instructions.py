@@ -154,17 +154,19 @@ class Instructions:
             else:
                 reddisData[key][self.lock] = True
                 self.FileHandeling.temp_save(reddisData)
+                try:
+                    reddisData[key][self.get_value] += final_redis_pair_Data
+                    # reddisData[key][self.get_value] = list(set(reddisData[key][self.get_value]))
+                    reddisData[key][self.get_value].sort()
+                    reddisData[key][self.creation_time] = str(datetime.today())
+                    reddisData[key][self.ttl] = ""
+                    reddisData[key][self.lock] = False
+                    self.FileHandeling.temp_save(reddisData)
+                except:
+                    reddisData[key][self.lock] = False
+                    self.FileHandeling.temp_save(reddisData)
+                    return "(Error wrong format data processed)",reddisData
                 
-                reddisData[key][self.get_value] += final_redis_pair_Data
-                # reddisData[key][self.get_value] = list(set(reddisData[key][self.get_value]))
-                reddisData[key][self.get_value].sort()
-                reddisData[key][self.creation_time] = str(datetime.today())
-                reddisData[key][self.ttl] = ""
-                
-                reddisData[key][self.lock] = False
-                self.FileHandeling.temp_save(reddisData)
-                
-
                 return "OK",reddisData
                 
 
