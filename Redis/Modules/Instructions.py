@@ -15,8 +15,14 @@ class Instructions:
 
     def wait_for_lock_to_unlock(self,usersInstruction,reddisData,command,key,value):
         if key in reddisData and self.lock in reddisData[key]:
+            count = 0
             while reddisData[key][self.lock]:
                 time.sleep(1)
+                count+=1
+                if count == 30:
+                    break
+            
+
         
 
     def execute_instruction(self,usersInstruction,reddisData):
