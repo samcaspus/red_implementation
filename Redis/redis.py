@@ -32,10 +32,11 @@ class Redis(Thread):
         running it through instruction engine
         
         '''
-        self.redisData = self.FileHandeling.read_json_data()
+        self.redisData = self.FileHandeling.read_json_data() 
+            
 
         while True:
-                    
+            self.redisData = self.FileHandeling.temp_read()
             usersInstruction = input(">>> ").split()
             #### collecting the response and the redis dictionary
 
