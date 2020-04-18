@@ -1,19 +1,25 @@
 import json
 from Modules.Instructions import Instructions
 from Modules.FileHandeling import FileHandeling
+from threading import Thread
 
-class Redis:
+
+class Redis(Thread):
     '''
     importing all necessary header files
 
     '''
-    def __init__(self):
-        self.Instructions = Instructions()
-        self.FileHandeling = FileHandeling()
+    # Commenting out for threading purpose
 
+    # def __init__(self):
+    #     self.Instructions = Instructions()
+    #     self.FileHandeling = FileHandeling()
 
     ##### main method for redis to run
+
     def run(self):
+        self.Instructions = Instructions()
+        self.FileHandeling = FileHandeling()
         '''
         cut 1:
 
@@ -46,4 +52,4 @@ class Redis:
 
     
 redisObject = Redis()
-redisObject.run()
+redisObject.start()

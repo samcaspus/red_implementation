@@ -1,6 +1,8 @@
 
 from datetime import datetime
 from dateutil import parser
+import time
+from .FileHandeling import FileHandeling
 
 class Instructions:
 
@@ -8,8 +10,14 @@ class Instructions:
         self.get_value = "value"
         self.creation_time = "creation_time"
         self.ttl = "ttl"
-        
+        self.lock = "lock"
+        self.FileHandeling = FileHandeling()
 
+    def wait_for_lock_to_unlock(self,usersInstruction,reddisData,command,key,value):
+        if key in reddisData and self.lock in reddisData[key]:
+            while reddisData[key][self.lock]:
+                time.sleep(1)
+        
 
     def execute_instruction(self,usersInstruction,reddisData):
 
@@ -40,7 +48,7 @@ class Instructions:
         ##### To get the data from the key
 
         if command == "get":
-            
+
             if key in reddisData:
                 timeToLive = reddisData[key][self.ttl]
 
@@ -70,10 +78,17 @@ class Instructions:
             if key not in reddisData:
                
                 reddisData[key] = {}
-                        
+            
+            self.wait_for_lock_to_unlock(usersInstruction,reddisData,command,key,value)
+            reddisData[key][self.lock] = True
+            self.FileHandeling.temp_save(reddisData)
+            
             reddisData[key][self.get_value] = value
             reddisData[key][self.creation_time] = str(datetime.today())
             reddisData[key][self.ttl] = ""
+            
+            reddisData[key][self.lock] = False
+            self.FileHandeling.temp_save(reddisData)
 
 
             return "OK",reddisData
@@ -87,13 +102,17 @@ class Instructions:
             if key not in reddisData or value.isdigit()==False:
                 
                 return "(key not present)",reddisData
-            else:
-                
+            else:                
+                self.wait_for_lock_to_unlock(usersInstruction,reddisData,command,key,value)
+                reddisData[key][self.lock] = True
+                self.FileHandeling.temp_save(reddisData)
+            
                 reddisData[key][self.creation_time] = str(datetime.today())
                 reddisData[key][self.ttl] = value
-                if value=="0":
-                    del reddisData[key]
                 
+                reddisData[key][self.lock] = False
+                self.FileHandeling.temp_save(reddisData)
+            
                 return "OK",reddisData
             
 
@@ -116,12 +135,20 @@ class Instructions:
             for i in range(0,len(data),2):
                 final_redis_pair_Data.append([data[i],data[i+1]])
 
+            self.wait_for_lock_to_unlock(usersInstruction,reddisData,command,key,value)
+            reddisData[key][self.lock] = True
+            self.FileHandeling.temp_save(reddisData)
+            
             reddisData[key][self.get_value] += final_redis_pair_Data
             # reddisData[key][self.get_value] = list(set(reddisData[key][self.get_value]))
             reddisData[key][self.get_value].sort()
             reddisData[key][self.creation_time] = str(datetime.today())
             reddisData[key][self.ttl] = ""
             
+            reddisData[key][self.lock] = False
+            self.FileHandeling.temp_save(reddisData)
+            
+
             return "OK",reddisData
             
 
@@ -209,9 +236,18 @@ class Instructions:
             if key not in reddisData:
                 reddisData[key] = {}
 
+            self.wait_for_lock_to_unlock(usersInstruction,reddisData,command,key,value)
+            reddisData[key][self.lock] = True
+            self.FileHandeling.temp_save(reddisData)
+            
+
             reddisData[key][self.get_value] = ''
             reddisData[key][self.creation_time] = str(datetime.today())
             reddisData[key][self.ttl] = ''
+            
+
+            reddisData[key][self.lock] = False
+            self.FileHandeling.temp_save(reddisData)
             
             return "OK",reddisData
 
@@ -222,7 +258,16 @@ class Instructions:
             if key not in reddisData:
                 return "(key not present)",reddisData
             
+            self.wait_for_lock_to_unlock(usersInstruction,reddisData,command,key,value)
+            reddisData[key][self.lock] = True
+            self.FileHandeling.temp_save(reddisData)
+            
             reddisData[key][self.get_value]+=value+" "
+            
+            reddisData[key][self.lock] = False
+            self.FileHandeling.temp_save(reddisData)
+            
+            
             return "OK",reddisData
 
 
