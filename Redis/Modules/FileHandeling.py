@@ -31,3 +31,16 @@ class FileHandeling:
         self.content = json.dumps(self.redis_data, sort_keys=True, indent=4, separators=(",", ": "))
         self.file.write(self.content)
         self.file.close()
+
+    def temp_read(self):
+        try:
+            self.file = open("demo.json","r")
+            self.content = self.file.read()
+            self.redis_data = json.loads(self.content)
+            self.file.close()
+
+            return self.redis_data
+        except:
+            self.file.close()
+            return {}
+        
