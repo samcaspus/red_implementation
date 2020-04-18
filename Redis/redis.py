@@ -36,8 +36,9 @@ class Redis(Thread):
             
 
         while True:
-            self.redisData = self.FileHandeling.temp_read()
+
             usersInstruction = input(">>> ").split()
+            self.redisData = self.FileHandeling.temp_read()
             #### collecting the response and the redis dictionary
 
             self.instructionResponse,self.redis_data = self.Instructions.execute_instruction(usersInstruction,self.redisData)
