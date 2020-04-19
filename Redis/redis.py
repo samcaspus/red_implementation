@@ -36,18 +36,21 @@ class Redis():
             
 
         while True:
-            usersInstruction = input(">>> ").split()
-            self.redisData = self.FileHandling.temp_read()
-            #### collecting the response and the redis dictionary
+            try:
+                usersInstruction = input(">>> ").split()
+                self.redisData = self.FileHandling.temp_read()
+                #### collecting the response and the redis dictionary
 
-            self.instructionResponse,self.redis_data = self.Instructions.execute_instruction(usersInstruction,self.redisData)
+                self.instructionResponse,self.redis_data = self.Instructions.execute_instruction(usersInstruction,self.redisData)
 
-            if not self.Instructions.behave(self.instructionResponse):
-                break
-            
-            
-            #### below line can be commented if temp save is to be disabled
-            self.FileHandling.temp_save(self.redisData)
+                if not self.Instructions.behave(self.instructionResponse):
+                    break
+                
+                
+                #### below line can be commented if temp save is to be disabled
+                self.FileHandling.temp_save(self.redisData)
+            except:
+                pass
 
         self.FileHandling.write_json_data(self.redisData)
 
