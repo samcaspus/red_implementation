@@ -1,6 +1,6 @@
 import json
 from Modules.Instructions import Instructions
-from Modules.FileHandeling import FileHandeling
+from Modules.FileHandling import FileHandling
 from threading import Thread
 
 
@@ -13,13 +13,13 @@ class Redis(Thread):
 
     # def __init__(self):
     #     self.Instructions = Instructions()
-    #     self.FileHandeling = FileHandeling()
+    #     self.FileHandling = FileHandling()
 
     ##### main method for redis to run
 
     def run(self):
         self.Instructions = Instructions()
-        self.FileHandeling = FileHandeling()
+        self.FileHandling = FileHandling()
         '''
         cut 1:
 
@@ -32,12 +32,12 @@ class Redis(Thread):
         running it through instruction engine
         
         '''
-        self.redisData = self.FileHandeling.read_json_data() 
+        self.redisData = self.FileHandling.read_json_data() 
             
 
         while True:
             usersInstruction = input(">>> ").split()
-            self.redisData = self.FileHandeling.temp_read()
+            self.redisData = self.FileHandling.temp_read()
             #### collecting the response and the redis dictionary
 
             self.instructionResponse,self.redis_data = self.Instructions.execute_instruction(usersInstruction,self.redisData)
@@ -47,9 +47,9 @@ class Redis(Thread):
             
             
             #### below line can be commented if temp save is to be disabled
-            self.FileHandeling.temp_save(self.redisData)
+            self.FileHandling.temp_save(self.redisData)
 
-        self.FileHandeling.write_json_data(self.redisData)
+        self.FileHandling.write_json_data(self.redisData)
 
     
 redisObject = Redis()

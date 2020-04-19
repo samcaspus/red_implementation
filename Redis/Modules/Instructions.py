@@ -2,7 +2,7 @@
 from datetime import datetime
 from dateutil import parser
 import time
-from .FileHandeling import FileHandeling
+from .FileHandling import FileHandling
 delay_time = 20
 
 class Instructions:
@@ -12,14 +12,14 @@ class Instructions:
         self.creation_time = "creation_time"
         self.ttl = "ttl"
         self.lock = "lock"
-        self.FileHandeling = FileHandeling()
+        self.FileHandling = FileHandling()
 
     def wait_for_lock_to_unlock(self,usersInstruction,reddisData,command,key,value):
         if key in reddisData and self.lock in reddisData[key]:
-            reddisData = self.FileHandeling.temp_read()
+            reddisData = self.FileHandling.temp_read()
             count = 0
             while reddisData[key][self.lock]:
-                reddisData = self.FileHandeling.temp_read()
+                reddisData = self.FileHandling.temp_read()
                 time.sleep(1)
                 count+=1
                 if count == delay_time:
@@ -93,14 +93,14 @@ class Instructions:
                 return "(resource utilised by another user)",reddisData
             else:            
                 reddisData[key][self.lock] = True
-                self.FileHandeling.temp_save(reddisData)
+                self.FileHandling.temp_save(reddisData)
                 
                 reddisData[key][self.get_value] = value
                 reddisData[key][self.creation_time] = str(datetime.today())
                 reddisData[key][self.ttl] = ""
                 
                 reddisData[key][self.lock] = False
-                self.FileHandeling.temp_save(reddisData)
+                self.FileHandling.temp_save(reddisData)
 
 
                 return "OK",reddisData
@@ -119,13 +119,13 @@ class Instructions:
                     return "(resource utilised by another user)",reddisData
                 else:
                     reddisData[key][self.lock] = True
-                    self.FileHandeling.temp_save(reddisData)
+                    self.FileHandling.temp_save(reddisData)
                 
                     reddisData[key][self.creation_time] = str(datetime.today())
                     reddisData[key][self.ttl] = value
                     
                     reddisData[key][self.lock] = False
-                    self.FileHandeling.temp_save(reddisData)
+                    self.FileHandling.temp_save(reddisData)
                 
                     return "OK",reddisData
                 
@@ -153,7 +153,7 @@ class Instructions:
                 return "(resource utilised by another user)",reddisData
             else:
                 reddisData[key][self.lock] = True
-                self.FileHandeling.temp_save(reddisData)
+                self.FileHandling.temp_save(reddisData)
                 try:
                     reddisData[key][self.get_value] += final_redis_pair_Data
                     # reddisData[key][self.get_value] = list(set(reddisData[key][self.get_value]))
@@ -161,10 +161,10 @@ class Instructions:
                     reddisData[key][self.creation_time] = str(datetime.today())
                     reddisData[key][self.ttl] = ""
                     reddisData[key][self.lock] = False
-                    self.FileHandeling.temp_save(reddisData)
+                    self.FileHandling.temp_save(reddisData)
                 except:
                     reddisData[key][self.lock] = False
-                    self.FileHandeling.temp_save(reddisData)
+                    self.FileHandling.temp_save(reddisData)
                     return "(Error wrong format data processed)",reddisData
                 
                 return "OK",reddisData
@@ -258,7 +258,7 @@ class Instructions:
                 return "(resource utilised by another user)",reddisData
             else:
                 reddisData[key][self.lock] = True
-                self.FileHandeling.temp_save(reddisData)
+                self.FileHandling.temp_save(reddisData)
                 
 
                 reddisData[key][self.get_value] = ''
@@ -267,7 +267,7 @@ class Instructions:
                 
 
                 reddisData[key][self.lock] = False
-                self.FileHandeling.temp_save(reddisData)
+                self.FileHandling.temp_save(reddisData)
                 
                 return "OK",reddisData
 
@@ -282,12 +282,12 @@ class Instructions:
                 return "(resource utilised by another user)",reddisData
             else: 
                 reddisData[key][self.lock] = True
-                self.FileHandeling.temp_save(reddisData)
+                self.FileHandling.temp_save(reddisData)
                 
                 reddisData[key][self.get_value]+=value+" "
                 
                 reddisData[key][self.lock] = False
-                self.FileHandeling.temp_save(reddisData)
+                self.FileHandling.temp_save(reddisData)
                 
             
             return "OK",reddisData

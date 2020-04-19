@@ -1,6 +1,6 @@
 import json
 
-class FileHandeling:
+class FileHandling:
 
     def read_json_data(self):
         print("\nRedis up\n")
