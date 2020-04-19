@@ -155,7 +155,11 @@ class Instructions:
                 reddisData[key][self.lock] = True
                 self.FileHandling.temp_save(reddisData)
                 try:
-                    reddisData[key][self.get_value] += final_redis_pair_Data
+                    
+                    for DataInRedis in final_redis_pair_Data:
+                        if DataInRedis not in reddisData[key][self.get_value]:
+                            reddisData[key][self.get_value] += [DataInRedis]
+                    
                     # reddisData[key][self.get_value] = list(set(reddisData[key][self.get_value]))
                     reddisData[key][self.get_value].sort()
                     reddisData[key][self.creation_time] = str(datetime.today())

@@ -1,10 +1,10 @@
 import json
 from Modules.Instructions import Instructions
 from Modules.FileHandling import FileHandling
-from threading import Thread
 
 
-class Redis(Thread):
+
+class Redis():
     '''
     importing all necessary header files
 
@@ -53,4 +53,4 @@ class Redis(Thread):
 
     
 redisObject = Redis()
-redisObject.start()
+redisObject.run()
