@@ -1,6 +1,6 @@
 # red_implementation
 
-# Python version >= 3  
+###### Python version ![Python](https://img.shields.io/badge/python-3-blue.svg) or greater
 
 # Instalation 
 #### Clone command => git clone https://github.com/samcaspus/red_implementation
