@@ -18,6 +18,16 @@
 - Zadd
 - Zrange and Zrange withscores
 - Zrankt
+- ttl
+- lpush
+- rpush
+- lindex
+- linsert
+- rinsert
+- llen
+- rpop
+- lpop
+- lrange
 
 ## Demo
 ![demo](redis.gif)

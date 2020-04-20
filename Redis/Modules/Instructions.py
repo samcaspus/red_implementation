@@ -12,6 +12,7 @@ class Instructions:
         self.creation_time = "creation_time"
         self.ttl = "ttl"
         self.lock = "lock"
+        
         self.FileHandling = FileHandling()
 
     def wait_for_lock_to_unlock(self,usersInstruction,reddisData,command,key,value):
@@ -45,10 +46,158 @@ class Instructions:
         except:
             pass
 
-     
-          
+
+
+#### print all elements in the range
+        if command=="lrange":
+            value = [int(p) for p in value.split()]
+            start = value[0]
+            end = value[1]
+            if key not in reddisData:
+                return "(nil) key not present",reddisData
+            result = ""
+
+            for i in range(start,end):
+                result+=reddisData[key][self.get_value][i]+" "
+
+            return result,reddisData
+
+#### pop last element from the list
+
+        if command=="rpop":
+
+            if key not in reddisData:
+                return "(nil) key not present",reddisData
+            
+            reddisData[key][self.get_value].pop()
+            
+            return "OK",reddisData
+
+
+##### pop an element from the end
+        if command=="lpop":
+
+            if key not in reddisData:
+                return "(nil) key not present",reddisData
+            
+            reddisData[key][self.get_value].pop(0)
+            
+            return "OK",reddisData
+
+
+
+
+
+#### get length of the list
+
+        if command=="llen":
+            
+            if key not in reddisData:
+                return "(nil) key not present",reddisData
+            
+            return len(reddisData[key][self.get_value]),reddisData
+
+
+
+##### insert an element after a specified element
+
+
+        if command=="rinsert":
+            value = value.split() 
+
+            if key not in reddisData:
+                return "(nil) key not present",reddisData
+            
+            if value[0] not in reddisData[key][self.get_value]:
+                return "(element not present to insert before)"
+            else:
+                reddisData[key][self.get_value].insert(reddisData[key][self.get_value].index(value[0])+1,value[1])
+                return "OK",reddisData
+
+        
+
+
+
+###### insert an element before an specified element    
+
+        if command=="linsert":
+            value = value.split() 
+
+            if key not in reddisData:
+                return "(nil) key not present",reddisData
+            
+            if value[0] not in reddisData[key][self.get_value]:
+                return "(element not present to insert before)"
+            else:
+                reddisData[key][self.get_value].insert(reddisData[key][self.get_value].index(value[0]),value[1])
+                return "OK",reddisData
+
+        
+
+###### to get element in an index lindex
+        if command=="lindex":
+            if key not in reddisData:
+                return "(nil) key not present",reddisData
+            
+            value = int(value)
+            if value>=len(reddisData[key][self.get_value]):
+                return "(out of bounds)",reddisData
+            
+            return reddisData[key][self.get_value][value],reddisData
+
+        
+###### for inserting in the right end
+        if command =="rpush":
+            value = value.split()
+            if key not in reddisData:
+                reddisData[key] = {}
+            
+            if not self.wait_for_lock_to_unlock(usersInstruction,reddisData,command,key,value):
+                return "(resource utilised by another user)",reddisData
+            else:
+                reddisData[key][self.lock] = True
+                self.FileHandling.temp_save(reddisData)
+                if self.get_value in reddisData[key]:
+                    reddisData[key][self.get_value]=value + reddisData[key][self.get_value]
+                else:
+                    reddisData[key][self.get_value]=value
+
+                reddisData[key][self.creation_time] = str(datetime.today())
+                reddisData[key][self.ttl] = ""
+                
+                reddisData[key][self.lock] = False
+                self.FileHandling.temp_save(reddisData)
+                return "OK",reddisData
+
+##### for left inserting in list
+        if command =="lpush":
+            value = value.split()
+            if key not in reddisData:
+                reddisData[key] = {}
+            
+            if not self.wait_for_lock_to_unlock(usersInstruction,reddisData,command,key,value):
+                return "(resource utilised by another user)",reddisData
+            else:
+                reddisData[key][self.lock] = True
+                self.FileHandling.temp_save(reddisData)
+                if self.get_value in reddisData[key]:
+                    reddisData[key][self.get_value]+=value
+                else:
+                    reddisData[key][self.get_value]=value
+
+                reddisData[key][self.creation_time] = str(datetime.today())
+                reddisData[key][self.ttl] = ""
+                
+                reddisData[key][self.lock] = False
+                self.FileHandling.temp_save(reddisData)
+                return "OK",reddisData
+
+
+
+
+
         ##### for exit purpose
-        usersInstruction,reddisData
+        
         if command == "exit":
             
             return "exit",reddisData
@@ -332,6 +481,40 @@ class Instructions:
                 return "(deleted) "+str(len(values))+" items",reddisData
             else:
                 return "(deleted) "+str(len(values)-len(key_words_not_present))+" items \n data not present to delete =>"+str(key_words_not_present),reddisData
+
+
+        ##### to know the time to live for a key
+        if command == "ttl":
+
+            if key not in reddisData:
+                return "(nil) key does not exist",reddisData
+
+            if key in reddisData:
+                timeToLive = reddisData[key][self.ttl]
+
+            if timeToLive!='':
+                timeToLive = int(reddisData[key][self.ttl])
+            
+            
+            creationTime = parser.parse(reddisData[key][self.creation_time])
+            today = datetime.today()
+            
+            
+            if key in reddisData and  timeToLive != "" and timeToLive >= (today - creationTime).seconds:
+
+                return  str(timeToLive - (today - creationTime).seconds)+" seconds left" ,reddisData
+            
+            else:
+                if key in reddisData:
+                    del reddisData[key]
+                
+                return "(nil) key does not exist",reddisData
+
+
+            
+            return reddisData[key][self.ttl],reddisData
+
+        
 
 
         ###### Final call if no options match       
