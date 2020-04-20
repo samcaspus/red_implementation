@@ -1,8 +1,7 @@
-# red_implementation
-
+# Requirement
 ###### Python version ![Python](https://img.shields.io/badge/python-3-blue.svg) or greater
 
-# Instalation 
+# Setup 
 #### Clone command => git clone https://github.com/samcaspus/red_implementation
 #### Go to directory => cd red_implementation/Redis/
 #### execute command => python redis.py
@@ -20,4 +19,5 @@
 - Zrange and Zrange withscores
 - Zrankt
 
+## Demo
 ![demo](redis.gif)
