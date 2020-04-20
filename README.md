@@ -19,3 +19,5 @@
 - Zadd
 - Zrange and Zrange withscores
 - Zrankt
+
+![demo](redis.gif)
