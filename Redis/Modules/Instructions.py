@@ -12,6 +12,7 @@ class Instructions:
         self.creation_time = "creation_time"
         self.ttl = "ttl"
         self.lock = "lock"
+        
         self.FileHandling = FileHandling()
 
     def wait_for_lock_to_unlock(self,usersInstruction,reddisData,command,key,value):
@@ -332,6 +333,16 @@ class Instructions:
                 return "(deleted) "+str(len(values))+" items",reddisData
             else:
                 return "(deleted) "+str(len(values)-len(key_words_not_present))+" items \n data not present to delete =>"+str(key_words_not_present),reddisData
+
+
+        ##### to know the time to live for a key
+        if command == "ttl":
+
+            if key not in reddisData:
+                return "(nil) key does not exist",reddisData
+            
+            return reddisData[key][self.ttl],reddisData
+
 
 
         ###### Final call if no options match       
