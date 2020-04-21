@@ -505,7 +505,7 @@ class Instructions:
                 return  str(timeToLive - (today - creationTime).seconds)+" seconds left" ,reddisData
             
             else:
-                if key in reddisData:
+                if key in reddisData and timeToLive=='0':
                     del reddisData[key]
                 
                 return "(nil) key does not exist",reddisData
